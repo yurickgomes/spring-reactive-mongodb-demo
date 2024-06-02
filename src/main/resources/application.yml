@@ -1,0 +1,10 @@
+server:
+  port: 8085
+spring:
+  application:
+    name: bulk-reactive-demo
+  main:
+    allow-bean-definition-overriding: true
+  data:
+    mongodb:
+      uri: mongodb://mongo-primary:27017,mongo-replica:27018/bulk_demo?replicaSet=rs0&tls=false
