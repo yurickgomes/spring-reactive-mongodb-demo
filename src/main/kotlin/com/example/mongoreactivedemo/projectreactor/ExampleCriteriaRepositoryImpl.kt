@@ -13,7 +13,7 @@ class ExampleCriteriaRepositoryImpl(
     @Qualifier("reactiveMongoTemplate")
     private val reactiveMongoTemplate: ReactiveMongoTemplate,
 ) : ExampleCriteriaRepository {
-    override fun findByCompoundIndexesList(compounds: List<CompoundIndexBodyDto>): Flux<Example> {
+    override fun findByCompoundIndexesList(compounds: List<CompoundIndexDto>): Flux<Example> {
         val criteria = Criteria()
         val orCriteria = mutableListOf<Criteria>()
         for (compound in compounds) {
