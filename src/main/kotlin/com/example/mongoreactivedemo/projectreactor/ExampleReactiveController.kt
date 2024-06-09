@@ -4,13 +4,13 @@ import com.example.mongoreactivedemo.common.ExampleDto
 import com.example.mongoreactivedemo.common.toDto
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import io.github.oshai.kotlinlogging.KotlinLogging
 import org.bson.types.ObjectId
 import org.springframework.core.io.ResourceLoader
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @RestController
@@ -27,8 +27,8 @@ class ExampleReactiveController(
             .collectList()
     }
 
-    @GetMapping("/find-compound-indexes")
-    fun findByCompoundIndexes(@RequestParam fileName: String): Mono<List<ExampleDto>> {
+    @GetMapping("/find-by-criteria")
+    fun findByCriteria(@RequestParam fileName: String): Mono<List<ExampleDto>> {
         val resource = resourceLoader.getResource("classpath:$fileName")
         val compounds = mutableListOf<CompoundIndexDto>()
         if (resource.exists()) {
@@ -45,13 +45,36 @@ class ExampleReactiveController(
                 .map { it.toDto() }
                 .collectList()
         } else {
-            logger.info { "File $fileName not found" }
-            return Mono.empty()
+            return Mono.error(NoSuchElementException("File $fileName not found"))
         }
     }
 
+    @GetMapping("/find-by-criteria-2")
+    fun findByCriteriaV2(@RequestParam fileName: String): Mono<List<ExampleDto>> {
+        val resource = resourceLoader.getResource("classpath:$fileName")
+        val sourceFlux: Flux<CompoundIndexDto> = if (resource.exists()) {
+            Flux.create { sink ->
+                resource.inputStream.use { inputStream ->
+                    inputStream.bufferedReader().use { reader ->
+                        reader.forEachLine { line ->
+                            val compoundIndex = objectMapper.readValue<CompoundIndexDto>(line)
+                            sink.next(compoundIndex)
+                        }
+                    }
+                }
+                sink.complete()
+            }
+        } else {
+            Flux.error(NoSuchElementException("File $fileName not found"))
+        }
+        return sourceFlux
+            .flatMap { exampleReactiveRepository.findByCompoundIndex(it) }
+            .map { it.toDto() }
+            .collectList()
+
+    }
+
     companion object {
-        private val logger = KotlinLogging.logger { }
         private val objectMapper = jacksonObjectMapper()
     }
 }
