@@ -1,4 +1,4 @@
-package com.example.mongoreactivedemo
+package com.example.mongoreactivedemo.common
 
 data class ExampleDto(
     val indexedField: String,

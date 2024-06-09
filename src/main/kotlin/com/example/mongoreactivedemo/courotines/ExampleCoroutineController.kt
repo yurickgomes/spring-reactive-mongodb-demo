@@ -1,9 +1,9 @@
-package com.example.mongoreactivedemo
+package com.example.mongoreactivedemo.courotines
 
-import io.github.oshai.kotlinlogging.KotlinLogging
+import com.example.mongoreactivedemo.common.ExampleDto
+import com.example.mongoreactivedemo.common.toDto
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.toList
 import org.bson.types.ObjectId
 import org.springframework.web.bind.annotation.GetMapping
@@ -17,14 +17,12 @@ class ExampleCoroutineController(
     private val exampleCoroutineRepository: ExampleCoroutineRepository,
 ) {
     @GetMapping("/find")
-    suspend fun find(@RequestParam ids: List<String>): List<String> {
-        val result = mutableListOf<String>()
-        exampleCoroutineRepository.findAllById(ids.asFlow().map { ObjectId(it) })
-            .onEach { logger.info { "onEach -> ${it.indexedField}" } }.map { it.indexedField }.toList(result)
+    suspend fun find(@RequestParam ids: List<String>): List<ExampleDto> {
+        val result = mutableListOf<ExampleDto>()
+        exampleCoroutineRepository
+            .findAllById(ids.asFlow().map { ObjectId(it) })
+            .map { it.toDto() }
+            .toList(result)
         return result
-    }
-
-    companion object {
-        private val logger = KotlinLogging.logger { }
     }
 }

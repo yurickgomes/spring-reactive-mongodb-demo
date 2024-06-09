@@ -1,4 +1,4 @@
-package com.example.mongoreactivedemo
+package com.example.mongoreactivedemo.projectreactor
 
 data class CompoundIndexBodyDto(
     val fieldA: String,

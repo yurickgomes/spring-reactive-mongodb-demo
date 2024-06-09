@@ -1,7 +1,7 @@
-package com.example.mongoreactivedemo
+package com.example.mongoreactivedemo.bulk
 
-import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -16,18 +16,20 @@ class ExampleBulkController(
     private val exampleBulkRepository: ExampleBulkRepository,
 ) {
     @PostMapping("/create")
-    @ResponseStatus(HttpStatus.CREATED)
-    suspend fun create(@RequestParam totalAccounts: Long) {
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    fun create(@RequestParam totalAccounts: Long) {
         exampleBulkRepository.reactiveBulkInsert(totalAccounts)
     }
 
     @PatchMapping("/update")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    suspend fun update(@RequestBody updateBodyDto: UpdateBodyDto) {
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    fun update(@RequestBody updateBodyDto: UpdateBodyDto) {
         exampleBulkRepository.reactiveBulkUpdate(updateBodyDto)
     }
 
-    companion object {
-        private val logger = KotlinLogging.logger { }
+    @DeleteMapping("/delete")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    fun delete(@RequestBody deleteBodyDto: DeleteBodyDto) {
+        exampleBulkRepository.reactiveBulkDelete(deleteBodyDto)
     }
 }

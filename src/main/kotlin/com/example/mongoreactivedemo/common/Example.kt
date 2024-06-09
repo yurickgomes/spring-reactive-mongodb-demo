@@ -1,4 +1,4 @@
-package com.example.mongoreactivedemo
+package com.example.mongoreactivedemo.common
 
 import org.bson.types.ObjectId
 import org.springframework.data.mongodb.core.mapping.Document

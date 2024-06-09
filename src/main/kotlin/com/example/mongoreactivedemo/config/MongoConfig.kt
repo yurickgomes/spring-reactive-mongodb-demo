@@ -1,4 +1,4 @@
-package com.example.mongoreactivedemo
+package com.example.mongoreactivedemo.config
 
 import com.mongodb.WriteConcern
 import org.springframework.beans.factory.annotation.Qualifier

@@ -1,4 +1,4 @@
-package com.example.mongoreactivedemo
+package com.example.mongoreactivedemo.bulk
 
 data class AccountBodyDto(
     val indexedField: String,

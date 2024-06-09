@@ -1,5 +1,6 @@
-package com.example.mongoreactivedemo
+package com.example.mongoreactivedemo.projectreactor
 
+import com.example.mongoreactivedemo.common.Example
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
@@ -16,8 +17,7 @@ class ExampleCriteriaRepositoryImpl(
         val criteria = Criteria()
         val orCriteria = mutableListOf<Criteria>()
         for (compound in compounds) {
-            val andCriteria = Criteria.where("fieldA").`is`(compound.fieldA)
-                .and("fieldB").`is`(compound.fieldB)
+            val andCriteria = Criteria.where("fieldA").`is`(compound.fieldA).and("fieldB").`is`(compound.fieldB)
             orCriteria.add(andCriteria)
         }
         criteria.orOperator(orCriteria)
