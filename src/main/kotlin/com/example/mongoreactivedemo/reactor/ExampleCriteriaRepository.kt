@@ -1,4 +1,4 @@
-package com.example.mongoreactivedemo.projectreactor
+package com.example.mongoreactivedemo.reactor
 
 import com.example.mongoreactivedemo.common.Example
 import reactor.core.publisher.Flux
