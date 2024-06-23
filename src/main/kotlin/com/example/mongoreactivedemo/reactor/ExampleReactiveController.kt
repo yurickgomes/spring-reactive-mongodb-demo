@@ -1,4 +1,4 @@
-package com.example.mongoreactivedemo.projectreactor
+package com.example.mongoreactivedemo.reactor
 
 import com.example.mongoreactivedemo.common.ExampleDto
 import com.example.mongoreactivedemo.common.toDto
@@ -54,19 +54,24 @@ class ExampleReactiveController(
         val resource = resourceLoader.getResource("classpath:$fileName")
         val sourceFlux: Flux<CompoundIndexDto> = if (resource.exists()) {
             Flux.create { sink ->
-                resource.inputStream.use { inputStream ->
-                    inputStream.bufferedReader().use { reader ->
-                        reader.forEachLine { line ->
-                            val compoundIndex = objectMapper.readValue<CompoundIndexDto>(line)
-                            sink.next(compoundIndex)
+                try {
+                    resource.inputStream.use { inputStream ->
+                        inputStream.bufferedReader().use { reader ->
+                            reader.forEachLine { line ->
+                                val compoundIndex = objectMapper.readValue<CompoundIndexDto>(line)
+                                sink.next(compoundIndex)
+                            }
                         }
                     }
+                    sink.complete()
+                } catch (e: Throwable) {
+                    sink.error(e)
                 }
-                sink.complete()
             }
         } else {
             Flux.error(NoSuchElementException("File $fileName not found"))
         }
+
         return sourceFlux
             .flatMap { exampleReactiveRepository.findByCompoundIndex(it) }
             .map { it.toDto() }
