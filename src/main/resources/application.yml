@@ -8,7 +8,7 @@ spring:
     allow-bean-definition-overriding: true
   data:
     mongodb:
-      uri: mongodb://mongo-primary:27017,mongo-replica:27018/bulk_demo?replicaSet=rs0&tls=false
+      uri: mongodb://mongo-primary:27017,mongo-replica:27018/bulk_demo?replicaSet=rs0&readPreference=primary&maxPoolSize=4&tls=false
   lifecycle:
     timeout-per-shutdown-phase: 5s
 
