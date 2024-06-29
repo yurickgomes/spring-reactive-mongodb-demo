@@ -76,7 +76,6 @@ class ExampleReactiveController(
             .flatMap { exampleReactiveRepository.findByCompoundIndex(it) }
             .map { it.toDto() }
             .collectList()
-
     }
 
     companion object {

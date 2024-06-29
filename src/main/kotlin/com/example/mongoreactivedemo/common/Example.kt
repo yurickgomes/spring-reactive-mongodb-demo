@@ -13,3 +13,11 @@ data class Example(
     val fieldA: String,
     val fieldB: String,
 )
+
+fun ExampleDto.toEntity() = Example(
+    indexedField = indexedField,
+    description = description,
+    fieldA = fieldA,
+    fieldB = fieldB,
+)
+

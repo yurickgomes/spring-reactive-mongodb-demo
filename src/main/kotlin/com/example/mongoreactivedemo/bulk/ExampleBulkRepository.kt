@@ -95,7 +95,7 @@ class ExampleBulkRepository(
         logger.info { "$messagePrefix Modified count = ${e.writeResult.modifiedCount}" }
         logger.info { "$messagePrefix Error count = ${e.writeErrors.size}" }
         e.writeErrors.forEach { error ->
-            logger.error { "Error message = ${error.message}" }
+            logger.error { "Index = ${error.index}, Error message = ${error.message}" }
         }
     }
 
