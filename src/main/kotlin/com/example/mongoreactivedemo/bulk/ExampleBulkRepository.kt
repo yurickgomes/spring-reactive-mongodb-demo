@@ -41,9 +41,9 @@ class ExampleBulkRepository(
             }
     }
 
-    fun reactiveBulkUpdate(updateBodyDto: UpdateBodyDto) {
+    fun reactiveBulkUpdate(updateBulkBodyDto: UpdateBulkBodyDto) {
         val bulkOps = reactiveBulkMongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, Example::class.java)
-        updateBodyDto.accounts.forEach {
+        updateBulkBodyDto.accounts.forEach {
             bulkOps.updateMulti(
                 Query.query(Criteria.where("indexedField").`is`(it.indexedField)),
                 Update()
@@ -62,9 +62,9 @@ class ExampleBulkRepository(
             }
     }
 
-    fun reactiveBulkDelete(deleteBodyDto: DeleteBodyDto) {
+    fun reactiveBulkDelete(deleteBulkBodyDto: DeleteBulkBodyDto) {
         val bulkOps = reactiveBulkMongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, Example::class.java)
-        deleteBodyDto.accounts.forEach {
+        deleteBulkBodyDto.accounts.forEach {
             bulkOps.remove(Query.query(Criteria.where("indexedField").`is`(it)))
         }
         val bulkWriteResultMono = bulkOps.execute()

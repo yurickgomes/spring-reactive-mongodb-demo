@@ -24,11 +24,11 @@ class ExampleCoroutineController(
     private val exampleCoroutineRepository: ExampleCoroutineRepository,
 ) {
     @GetMapping
-    suspend fun findAll(@RequestParam page: Int, @RequestParam pageSize: Int): List<ExampleDto> {
+    suspend fun find(@RequestParam page: Int, @RequestParam pageSize: Int): List<ExampleDto> {
         val result = mutableListOf<ExampleDto>()
         val pageable = PageRequest.of(page, pageSize)
         exampleCoroutineRepository
-            .findPage(pageable)
+            .fetchChunk(pageable)
             .map { it.toDto() }
             .toList(result)
         return result

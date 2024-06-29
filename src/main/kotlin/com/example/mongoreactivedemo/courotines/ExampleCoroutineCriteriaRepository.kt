@@ -5,5 +5,5 @@ import kotlinx.coroutines.flow.Flow
 import org.springframework.data.domain.Pageable
 
 interface ExampleCoroutineCriteriaRepository {
-    fun findPage(pageable: Pageable): Flow<Example>
+    fun fetchChunk(pageable: Pageable): Flow<Example>
 }

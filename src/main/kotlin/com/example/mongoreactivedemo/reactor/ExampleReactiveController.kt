@@ -2,83 +2,58 @@ package com.example.mongoreactivedemo.reactor
 
 import com.example.mongoreactivedemo.common.ExampleDto
 import com.example.mongoreactivedemo.common.toDto
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
+import com.example.mongoreactivedemo.common.toEntity
 import org.bson.types.ObjectId
 import org.springframework.core.io.ResourceLoader
+import org.springframework.data.domain.PageRequest
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
-import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @RestController
-@RequestMapping("/reactive")
+@RequestMapping("/reactive/examples")
 class ExampleReactiveController(
     private val exampleReactiveRepository: ExampleReactiveRepository,
     private val resourceLoader: ResourceLoader,
 ) {
-    @GetMapping("/find")
-    fun find(@RequestParam ids: List<String>): Mono<List<ExampleDto>> {
+    @GetMapping
+    fun find(@RequestParam page: Int, @RequestParam pageSize: Int): Mono<List<ExampleDto>> {
+        val pageable = PageRequest.of(page, pageSize)
         return exampleReactiveRepository
-            .findAllById(ids.map { ObjectId(it) })
+            .fetchChunk(pageable)
             .map { it.toDto() }
             .collectList()
     }
 
-    @GetMapping("/find-by-criteria")
-    fun findByCriteria(@RequestParam fileName: String): Mono<List<ExampleDto>> {
-        val resource = resourceLoader.getResource("classpath:$fileName")
-        val compounds = mutableListOf<CompoundIndexDto>()
-        if (resource.exists()) {
-            resource.inputStream.use { inputStream ->
-                inputStream.bufferedReader().use { reader ->
-                    reader.forEachLine { line ->
-                        val compoundIndex = objectMapper.readValue<CompoundIndexDto>(line)
-                        compounds.add(compoundIndex)
-                    }
-                }
-            }
-
-            return exampleReactiveRepository.findByCompoundIndexesList(compounds)
-                .map { it.toDto() }
-                .collectList()
-        } else {
-            return Mono.error(NoSuchElementException("File $fileName not found"))
-        }
+    @GetMapping("/{id}")
+    fun findById(@PathVariable id: String): Mono<ExampleDto> {
+        return exampleReactiveRepository.findById(ObjectId(id)).map { it.toDto() }
     }
 
-    @GetMapping("/find-by-criteria-2")
-    fun findByCriteriaV2(@RequestParam fileName: String): Mono<List<ExampleDto>> {
-        val resource = resourceLoader.getResource("classpath:$fileName")
-        val sourceFlux: Flux<CompoundIndexDto> = if (resource.exists()) {
-            Flux.create { sink ->
-                try {
-                    resource.inputStream.use { inputStream ->
-                        inputStream.bufferedReader().use { reader ->
-                            reader.forEachLine { line ->
-                                val compoundIndex = objectMapper.readValue<CompoundIndexDto>(line)
-                                sink.next(compoundIndex)
-                            }
-                        }
-                    }
-                    sink.complete()
-                } catch (e: Throwable) {
-                    sink.error(e)
-                }
-            }
-        } else {
-            Flux.error(NoSuchElementException("File $fileName not found"))
-        }
-
-        return sourceFlux
-            .flatMap { exampleReactiveRepository.findByCompoundIndex(it) }
-            .map { it.toDto() }
-            .collectList()
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    fun create(@RequestBody body: ExampleDto): Mono<ExampleDto> {
+        val persisted = exampleReactiveRepository.save(body.toEntity())
+        return persisted.map { it.toDto() }
     }
 
-    companion object {
-        private val objectMapper = jacksonObjectMapper()
+    @DeleteMapping("/{id}")
+    fun remove(@PathVariable id: String): Mono<Void> {
+        return exampleReactiveRepository.deleteById(ObjectId(id))
+    }
+
+    @PatchMapping("/{id}")
+    fun updateDescription(@PathVariable id: String, @RequestBody body: PatchBodyDto): Mono<ExampleDto> {
+        val persisted = exampleReactiveRepository.updateDescription(ObjectId(id), body)
+        return persisted.map { it.toDto() }
     }
 }

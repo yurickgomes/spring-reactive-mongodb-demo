@@ -11,25 +11,25 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/bulk")
+@RequestMapping("/bulk/examples")
 class ExampleBulkController(
     private val exampleBulkRepository: ExampleBulkRepository,
 ) {
-    @PostMapping("/create")
+    @PostMapping
     @ResponseStatus(HttpStatus.ACCEPTED)
     fun create(@RequestParam totalAccounts: Long) {
         exampleBulkRepository.reactiveBulkInsert(totalAccounts)
     }
 
-    @PatchMapping("/update")
+    @PatchMapping
     @ResponseStatus(HttpStatus.ACCEPTED)
-    fun update(@RequestBody updateBodyDto: UpdateBodyDto) {
-        exampleBulkRepository.reactiveBulkUpdate(updateBodyDto)
+    fun update(@RequestBody updateBulkBodyDto: UpdateBulkBodyDto) {
+        exampleBulkRepository.reactiveBulkUpdate(updateBulkBodyDto)
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping
     @ResponseStatus(HttpStatus.ACCEPTED)
-    fun delete(@RequestBody deleteBodyDto: DeleteBodyDto) {
-        exampleBulkRepository.reactiveBulkDelete(deleteBodyDto)
+    fun delete(@RequestBody deleteBulkBodyDto: DeleteBulkBodyDto) {
+        exampleBulkRepository.reactiveBulkDelete(deleteBulkBodyDto)
     }
 }
