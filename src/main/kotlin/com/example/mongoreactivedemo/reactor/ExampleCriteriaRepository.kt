@@ -8,8 +8,6 @@ import reactor.core.publisher.Mono
 
 interface ExampleCriteriaRepository {
     fun findByCompoundIndexesList(compounds: List<CompoundIndexDto>): Flux<Example>
-
     fun fetchChunk(pageable: Pageable): Flux<Example>
-
     fun updateDescription(id: ObjectId, description: PatchBodyDto): Mono<Example>
 }

@@ -4,7 +4,6 @@ import com.example.mongoreactivedemo.common.ExampleDto
 import com.example.mongoreactivedemo.common.toDto
 import com.example.mongoreactivedemo.common.toEntity
 import org.bson.types.ObjectId
-import org.springframework.core.io.ResourceLoader
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -23,7 +22,6 @@ import reactor.core.publisher.Mono
 @RequestMapping("/reactive/examples")
 class ExampleReactiveController(
     private val exampleReactiveRepository: ExampleReactiveRepository,
-    private val resourceLoader: ResourceLoader,
 ) {
     @GetMapping
     fun find(@RequestParam page: Int, @RequestParam pageSize: Int): Mono<List<ExampleDto>> {
