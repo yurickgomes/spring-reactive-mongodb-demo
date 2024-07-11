@@ -1,6 +1,7 @@
 package com.example.mongoreactivedemo.reactor
 
 import com.example.mongoreactivedemo.common.ExampleDto
+import com.example.mongoreactivedemo.common.PatchBodyDto
 import com.example.mongoreactivedemo.common.toDto
 import com.example.mongoreactivedemo.common.toEntity
 import org.bson.types.ObjectId

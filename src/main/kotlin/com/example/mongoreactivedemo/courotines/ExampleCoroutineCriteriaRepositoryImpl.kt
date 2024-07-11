@@ -15,6 +15,7 @@ class ExampleCoroutineCriteriaRepositoryImpl(
     private val reactiveMongoTemplate: ReactiveMongoTemplate,
 ) : ExampleCoroutineCriteriaRepository {
     override fun fetchChunk(pageable: Pageable): Flow<Example> {
+        // just use project reactor <-> coroutines adapters
         return reactiveMongoTemplate.find(Query().with(pageable), Example::class.java).asFlow()
     }
 }

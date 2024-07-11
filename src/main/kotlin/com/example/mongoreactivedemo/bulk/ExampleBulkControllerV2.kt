@@ -1,7 +1,9 @@
-package com.example.mongoreactivedemo.reactor
+package com.example.mongoreactivedemo.bulk
 
 import com.example.mongoreactivedemo.common.ExampleDto
 import com.example.mongoreactivedemo.common.toDto
+import com.example.mongoreactivedemo.reactor.CompoundIndexDto
+import com.example.mongoreactivedemo.reactor.ExampleReactiveRepository
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.springframework.core.io.ResourceLoader
@@ -13,36 +15,15 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @RestController
-@RequestMapping("/read-file/examples")
-class ExampleInputFromFileController(
+@RequestMapping("/v2/bulk/examples")
+class ExampleBulkControllerV2(
     private val exampleReactiveRepository: ExampleReactiveRepository,
     private val resourceLoader: ResourceLoader,
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
 ) {
-    @GetMapping("/file1")
-    fun findByCriteria(@RequestParam fileName: String): Mono<List<ExampleDto>> {
-        val resource = resourceLoader.getResource("classpath:$fileName")
-        val compounds = mutableListOf<CompoundIndexDto>()
-        if (resource.exists()) {
-            resource.inputStream.use { inputStream ->
-                inputStream.bufferedReader().use { reader ->
-                    reader.forEachLine { line ->
-                        val compoundIndex = objectMapper.readValue<CompoundIndexDto>(line)
-                        compounds.add(compoundIndex)
-                    }
-                }
-            }
 
-            return exampleReactiveRepository.findByCompoundIndexesList(compounds)
-                .map { it.toDto() }
-                .collectList()
-        } else {
-            return Mono.error(NoSuchElementException("File $fileName not found"))
-        }
-    }
-
-    @GetMapping("/file2")
-    fun findByCriteriaV2(@RequestParam fileName: String): Mono<List<ExampleDto>> {
+    @GetMapping("/file")
+    fun findAllFromFile(@RequestParam fileName: String): Mono<List<ExampleDto>> {
         val resource = resourceLoader.getResource("classpath:$fileName")
         val sourceFlux: Flux<CompoundIndexDto> = if (resource.exists()) {
             Flux.create { sink ->

@@ -1,6 +1,7 @@
 package com.example.mongoreactivedemo.reactor
 
 import com.example.mongoreactivedemo.common.Example
+import com.example.mongoreactivedemo.common.PatchBodyDto
 import org.bson.types.ObjectId
 import org.springframework.data.domain.Pageable
 import reactor.core.publisher.Flux
