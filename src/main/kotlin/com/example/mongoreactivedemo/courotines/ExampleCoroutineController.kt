@@ -3,8 +3,8 @@ package com.example.mongoreactivedemo.courotines
 import com.example.mongoreactivedemo.common.ExampleDto
 import com.example.mongoreactivedemo.common.toDto
 import com.example.mongoreactivedemo.common.toEntity
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
 import org.bson.types.ObjectId
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
@@ -24,14 +24,11 @@ class ExampleCoroutineController(
     private val exampleCoroutineRepository: ExampleCoroutineRepository,
 ) {
     @GetMapping
-    suspend fun find(@RequestParam page: Int, @RequestParam pageSize: Int): List<ExampleDto> {
-        val result = mutableListOf<ExampleDto>()
+    fun find(@RequestParam page: Int, @RequestParam pageSize: Int): Flow<ExampleDto> {
         val pageable = PageRequest.of(page, pageSize)
-        exampleCoroutineRepository
+        return exampleCoroutineRepository
             .fetchChunk(pageable)
             .map { it.toDto() }
-            .toList(result)
-        return result
     }
 
     @GetMapping("/{id}")

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
-import reactor.core.publisher.Mono
+import reactor.core.publisher.Flux
 
 @RestController
 @RequestMapping("/bulk/examples")
@@ -29,24 +29,24 @@ class ExampleBulkController(
 ) {
     @PostMapping
     @ResponseStatus(HttpStatus.ACCEPTED)
-    fun create(@RequestParam totalAccounts: Long) {
-        exampleBulkRepository.reactiveBulkInsert(totalAccounts)
+    fun insert(@RequestParam totalAccounts: Long) {
+        exampleBulkRepository.insert(totalAccounts)
     }
 
     @PatchMapping
     @ResponseStatus(HttpStatus.ACCEPTED)
     fun update(@RequestBody updateBulkBodyDto: UpdateBulkBodyDto) {
-        exampleBulkRepository.reactiveBulkUpdate(updateBulkBodyDto)
+        exampleBulkRepository.update(updateBulkBodyDto)
     }
 
     @DeleteMapping
     @ResponseStatus(HttpStatus.ACCEPTED)
-    fun delete(@RequestBody deleteBulkBodyDto: DeleteBulkBodyDto) {
-        exampleBulkRepository.reactiveBulkDelete(deleteBulkBodyDto)
+    fun remove(@RequestBody deleteBulkBodyDto: DeleteBulkBodyDto) {
+        exampleBulkRepository.remove(deleteBulkBodyDto)
     }
 
     @GetMapping("/file")
-    fun findAllFromFile(@RequestParam fileName: String): Mono<List<ExampleDto>> {
+    fun loadFromFile(@RequestParam fileName: String): Flux<ExampleDto> {
         val resource = resourceLoader.getResource("classpath:$fileName")
         val compounds = mutableListOf<CompoundIndexDto>()
         if (resource.exists()) {
@@ -61,9 +61,8 @@ class ExampleBulkController(
 
             return exampleReactiveRepository.findByCompoundIndexesList(compounds)
                 .map { it.toDto() }
-                .collectList()
         } else {
-            return Mono.error(NoSuchElementException("File $fileName not found"))
+            return Flux.error(NoSuchElementException("File $fileName not found"))
         }
     }
 }

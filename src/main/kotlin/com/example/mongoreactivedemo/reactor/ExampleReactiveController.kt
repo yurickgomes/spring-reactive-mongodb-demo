@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @RestController
@@ -25,12 +26,11 @@ class ExampleReactiveController(
     private val exampleReactiveRepository: ExampleReactiveRepository,
 ) {
     @GetMapping
-    fun find(@RequestParam page: Int, @RequestParam pageSize: Int): Mono<List<ExampleDto>> {
+    fun find(@RequestParam page: Int, @RequestParam pageSize: Int): Flux<ExampleDto> {
         val pageable = PageRequest.of(page, pageSize)
         return exampleReactiveRepository
             .fetchChunk(pageable)
             .map { it.toDto() }
-            .collectList()
     }
 
     @GetMapping("/{id}")

@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("/v2/bulk/examples")
@@ -23,7 +22,7 @@ class ExampleBulkControllerV2(
 ) {
 
     @GetMapping("/file")
-    fun findAllFromFile(@RequestParam fileName: String): Mono<List<ExampleDto>> {
+    fun loadFromFile(@RequestParam fileName: String): Flux<ExampleDto> {
         val resource = resourceLoader.getResource("classpath:$fileName")
         val sourceFlux: Flux<CompoundIndexDto> = if (resource.exists()) {
             Flux.create { sink ->
@@ -48,6 +47,5 @@ class ExampleBulkControllerV2(
         return sourceFlux
             .flatMap { exampleReactiveRepository.findByCompoundIndex(it) }
             .map { it.toDto() }
-            .collectList()
     }
 }

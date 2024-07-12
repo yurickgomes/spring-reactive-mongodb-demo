@@ -17,7 +17,7 @@ class ExampleBulkRepository(
     @Qualifier("reactiveBulkMongoTemplate")
     private val reactiveBulkMongoTemplate: ReactiveMongoTemplate,
 ) {
-    fun reactiveBulkInsert(totalAccounts: Long) {
+    fun insert(totalAccounts: Long) {
         val bulkOps = reactiveBulkMongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, Example::class.java)
         val valuesToInsert = mutableListOf<Example>()
         for (i in 0 until totalAccounts) {
@@ -41,7 +41,7 @@ class ExampleBulkRepository(
             }
     }
 
-    fun reactiveBulkUpdate(updateBulkBodyDto: UpdateBulkBodyDto) {
+    fun update(updateBulkBodyDto: UpdateBulkBodyDto) {
         val bulkOps = reactiveBulkMongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, Example::class.java)
         updateBulkBodyDto.accounts.forEach {
             bulkOps.updateMulti(
@@ -62,7 +62,7 @@ class ExampleBulkRepository(
             }
     }
 
-    fun reactiveBulkDelete(deleteBulkBodyDto: DeleteBulkBodyDto) {
+    fun remove(deleteBulkBodyDto: DeleteBulkBodyDto) {
         val bulkOps = reactiveBulkMongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, Example::class.java)
         deleteBulkBodyDto.accounts.forEach {
             bulkOps.remove(Query.query(Criteria.where("indexedField").`is`(it)))
