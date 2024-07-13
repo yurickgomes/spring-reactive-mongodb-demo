@@ -1,8 +1,8 @@
 package com.example.mongoreactivedemo.bulk
 
+import com.example.mongoreactivedemo.common.CompoundIndexDto
 import com.example.mongoreactivedemo.common.ExampleDto
 import com.example.mongoreactivedemo.common.toDto
-import com.example.mongoreactivedemo.reactor.CompoundIndexDto
 import com.example.mongoreactivedemo.reactor.ExampleReactiveRepository
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue

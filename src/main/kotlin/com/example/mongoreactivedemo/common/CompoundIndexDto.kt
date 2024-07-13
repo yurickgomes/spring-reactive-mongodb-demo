@@ -1,4 +1,4 @@
-package com.example.mongoreactivedemo.reactor
+package com.example.mongoreactivedemo.common
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
