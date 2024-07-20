@@ -19,5 +19,5 @@ Demo application that shows how to get started with spring boot 3 and mongodb re
 
 ## Bulk operations
 
-This repo also contains examples of `ReactiveBulkOperations` usage aimed to bulk operations provided by MongoDB.
+This repo also contains examples of `ReactiveBulkOperations` usage, to perform bulk operations on a MongoDB collection.
 
